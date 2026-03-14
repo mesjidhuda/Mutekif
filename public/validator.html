@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ID Validator | Etikaf Admin Suite</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant:ital,wght@0,300..700;1,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Didact+Gothic&family=Outfit:wght@100..900&family=Stack+Sans+Headline:wght@200..700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <link rel="stylesheet" href="css/premium.css" />
+        <style>
+            .validator-container {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 40px 20px 100px;
+            }
+
+            .search-toggle {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 30px;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 5px;
+                border-radius: 60px;
+                border: 1px solid var(--glass-border);
+            }
+
+            .toggle-btn {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                padding: 15px 20px;
+                background: transparent;
+                border: none;
+                border-radius: 60px;
+                color: var(--text-secondary);
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .toggle-btn i {
+                font-size: 1.2rem;
+            }
+
+            .toggle-btn.active {
+                background: var(--accent);
+                color: var(--bg-dark);
+            }
+
+            .toggle-btn:hover:not(.active) {
+                background: rgba(255, 255, 255, 0.05);
+                color: white;
+            }
+
+            .search-form {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+
+            .input-wrapper {
+                flex: 1;
+                position: relative;
+            }
+
+            .input-wrapper input {
+                width: 100%;
+                padding: 18px 20px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 2px solid var(--glass-border);
+                border-radius: 16px;
+                color: white;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                font-family: "Inter", sans-serif;
+            }
+
+            .input-wrapper input:focus {
+                outline: none;
+                border-color: var(--accent);
+                background: rgba(255, 255, 255, 0.1);
+                box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            }
+
+            .input-wrapper input::placeholder {
+                color: var(--text-muted);
+            }
+
+            .fan-hint {
+                margin: 10px 0 20px 20px;
+                color: var(--accent);
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .result-panel {
+                background: var(--glass);
+                backdrop-filter: blur(10px);
+                border: 1px solid var(--glass-border);
+                border-radius: 24px;
+                overflow: hidden;
+                margin-top: 30px;
+                animation: slideUp 0.4s ease;
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .result-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 25px;
+                background: rgba(212, 175, 55, 0.1);
+                border-bottom: 1px solid var(--glass-border);
+            }
+
+            .result-title {
+                font-weight: 700;
+                color: var(--accent);
+                font-size: 1.2rem;
+                letter-spacing: 0.5px;
+            }
+
+            .result-badge {
+                padding: 6px 18px;
+                background: var(--accent);
+                color: var(--bg-dark);
+                border-radius: 50px;
+                font-size: 0.85rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .result-content {
+                padding: 25px;
+            }
+
+            .result-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 15px 0;
+                border-bottom: 1px solid var(--glass-border);
+            }
+
+            .result-item.highlight {
+                background: rgba(212, 175, 55, 0.05);
+                margin: 15px -25px;
+                padding: 20px 25px;
+                border-bottom: none;
+                border-left: 4px solid var(--accent);
+            }
+
+            .result-label {
+                color: var(--text-secondary);
+                font-weight: 500;
+            }
+
+            .result-value {
+                font-weight: 700;
+                color: var(--accent);
+                font-size: 1.1rem;
+            }
+
+            .not-filled {
+                color: #f44336;
+                font-style: italic;
+                font-weight: 400;
+            }
+
+            .stats-panel {
+                margin-top: 20px;
+                padding: 20px 25px;
+                background: rgba(255, 255, 255, 0.02);
+                border-radius: 16px;
+                border: 1px solid var(--glass-border);
+            }
+
+            .stats-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .stat-item {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .stat-label {
+                color: var(--text-secondary);
+                font-size: 0.95rem;
+            }
+
+            .stat-value {
+                font-weight: 800;
+                color: var(--accent);
+                font-size: 1.8rem;
+            }
+
+            .example-panel {
+                margin-top: 40px;
+            }
+
+            .example-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                font-size: 0.9rem;
+            }
+
+            .example-table th {
+                color: var(--accent);
+                font-weight: 700;
+                padding: 15px;
+                text-align: left;
+                background: rgba(212, 175, 55, 0.1);
+                border-bottom: 2px solid var(--accent);
+            }
+
+            .example-table td {
+                padding: 12px 15px;
+                border-bottom: 1px solid var(--glass-border);
+            }
+
+            .example-table tr:hover td {
+                background: rgba(255, 255, 255, 0.02);
+            }
+
+            .note-text {
+                margin-top: 20px;
+                color: var(--text-muted);
+                font-size: 0.85rem;
+                font-style: italic;
+                text-align: center;
+            }
+
+            .file-input-wrapper {
+                flex: 1;
+            }
+
+            .file-input-wrapper input[type="file"] {
+                display: none;
+            }
+
+            .file-label {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 18px 25px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 2px dashed var(--glass-border);
+                border-radius: 16px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .file-label:hover {
+                border-color: var(--accent);
+                background: rgba(212, 175, 55, 0.05);
+            }
+
+            .file-label.selected {
+                border-style: solid;
+                background: rgba(212, 175, 55, 0.1);
+                border-color: var(--accent);
+            }
+
+            .file-icon {
+                font-size: 1.8rem;
+                color: var(--accent);
+            }
+
+            .file-text {
+                color: var(--text-secondary);
+                font-size: 0.95rem;
+            }
+
+            /* Multi-result styles */
+            .multi-result-badge {
+                background: #f57c00;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                margin-left: 10px;
+            }
+
+            .results-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+                font-size: 0.9rem;
+            }
+
+            .results-table th {
+                text-align: left;
+                padding: 12px 10px;
+                background: rgba(212, 175, 55, 0.1);
+                color: var(--accent);
+                font-weight: 600;
+                font-size: 0.85rem;
+                border-bottom: 2px solid var(--accent);
+            }
+
+            .results-table td {
+                padding: 12px 10px;
+                border-bottom: 1px solid var(--glass-border);
+                color: var(--text-primary);
+            }
+
+            .results-table tr:hover td {
+                background: rgba(255, 255, 255, 0.02);
+            }
+
+            .results-table .row-number {
+                color: var(--text-muted);
+                font-size: 0.8rem;
+            }
+
+            .multi-result-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 15px;
+                padding: 10px 15px;
+                background: rgba(212, 175, 55, 0.05);
+                border-radius: 12px;
+                border-left: 3px solid #f57c00;
+            }
+
+            .multi-result-header i {
+                color: #f57c00;
+                font-size: 1.2rem;
+            }
+
+            .multi-result-header span {
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+            }
+
+            .record-count-badge {
+                background: var(--accent);
+                color: var(--bg-dark);
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 0.7rem;
+                font-weight: 600;
+                margin-left: 8px;
+            }
+
+            .duplicate-stats {
+                display: flex;
+                gap: 15px;
+                margin-top: 10px;
+                flex-wrap: wrap;
+            }
+
+            .duplicate-stat {
+                background: rgba(245, 124, 0, 0.1);
+                border: 1px solid rgba(245, 124, 0, 0.3);
+                border-radius: 20px;
+                padding: 8px 15px;
+                font-size: 0.85rem;
+                color: #f57c00;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .duplicate-stat i {
+                font-size: 1rem;
+            }
+
+            .unique-stat {
+                background: rgba(76, 175, 80, 0.1);
+                border: 1px solid rgba(76, 175, 80, 0.3);
+                border-radius: 20px;
+                padding: 8px 15px;
+                font-size: 0.85rem;
+                color: #4caf50;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .total-stat {
+                background: rgba(33, 150, 243, 0.1);
+                border: 1px solid rgba(33, 150, 243, 0.3);
+                border-radius: 20px;
+                padding: 8px 15px;
+                font-size: 0.85rem;
+                color: #2196f3;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .fan-value {
+                font-family: monospace;
+                letter-spacing: 1px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Bottom Navigation - Telegram Style -->
+        <nav class="bottom-nav">
+            <a href="/" class="bottom-nav-item active" id="nav-home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/generator" class="bottom-nav-item" id="nav-generator">
+                <i class="fas fa-id-card"></i>
+                <span>Generator</span>
+            </a>
+            <a href="/validator" class="bottom-nav-item" id="nav-validator">
+                <i class="fas fa-search"></i>
+                <span>Validator</span>
+            </a>
+            <button
+                type="button"
+                onclick="window.print()"
+                id="printBtn"
+                class="bottom-nav-export"
+                disabled
+            >
+                <i class="fas fa-print"></i>
+                <span>Export</span>
+            </button>
+        </nav>
+
+        <!-- Original navbar removed, keeping only brand logo -->
+        <nav class="glass-nav no-print" style="position: relative">
+            <div class="nav-container">
+                <div class="brand">
+                    <div class="logo-icon"><i class="fas fa-mosque"></i></div>
+                    <div class="brand-text">
+                        <span class="main-title">ETIKAF ADMIN</span>
+                        <span class="sub-title">Identity Suite</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="validator-container">
+            <div class="hero-section" style="margin-bottom: 30px">
+                <h1>Identity Lookup System</h1>
+                <p>Instant verification by phone number or Fan number</p>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="glass-panel" style="margin-bottom: 30px">
+                <h2 style="color: var(--accent); margin-bottom: 20px">
+                    📤 Upload Spreadsheet
+                </h2>
+                <p style="color: var(--text-secondary); margin-bottom: 25px">
+                    Supported formats: .xlsx, .xls, .csv (Max: 10MB)
+                </p>
+
+                <form
+                    id="uploadForm"
+                    style="
+                        display: flex;
+                        gap: 15px;
+                        align-items: flex-start;
+                        flex-wrap: wrap;
+                    "
+                >
+                    <div class="file-input-wrapper">
+                        <input
+                            type="file"
+                            id="fileInput"
+                            accept=".xlsx,.xls,.csv"
+                            required
+                        />
+                        <label
+                            for="fileInput"
+                            class="file-label"
+                            id="fileLabel"
+                        >
+                            <span class="file-icon">📁</span>
+                            <span class="file-text" id="fileLabelText"
+                                >Choose file or drag here</span
+                            >
+                        </label>
+                    </div>
+                    <button
+                        type="submit"
+                        id="uploadBtn"
+                        class="premium-btn"
+                        style="padding: 18px 35px"
+                    >
+                        <i class="fas fa-upload"></i> Upload & Process
+                    </button>
+                </form>
+
+                <div id="uploadStatus" class="status-message hidden"></div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="glass-panel">
+                <h2 style="color: var(--accent); margin-bottom: 25px">
+                    🔍 Search Records
+                </h2>
+
+                <div class="search-toggle">
+                    <button class="toggle-btn active" id="searchByPhoneBtn">
+                        <i class="fas fa-phone-alt"></i>
+                        Search by Phone
+                    </button>
+                    <button class="toggle-btn" id="searchByFanBtn">
+                        <i class="fas fa-id-card"></i>
+                        Search by Fan Number
+                    </button>
+                </div>
+
+                <div class="search-form">
+                    <div class="input-wrapper">
+                        <input
+                            type="text"
+                            id="searchInput"
+                            placeholder="Enter phone number (e.g., 0912345678)"
+                        />
+                    </div>
+                    <button
+                        class="premium-btn"
+                        id="searchBtn"
+                        disabled
+                        style="padding: 18px 35px"
+                    >
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+
+                <div class="fan-hint hidden" id="fanHint">
+                    <i class="fas fa-info-circle"></i>
+                    Format: 16 digits (e.g., 2856 1732 7693 4875)
+                </div>
+
+                <!-- Result Panel with Single and Multiple Views -->
+<!-- Result Panel - Simplified -->
+<div id="resultPanel" class="result-panel hidden">
+    <div class="result-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="result-title">Search Result</span>
+            <span class="result-badge" id="statusBadge">Found</span>
+        </div>
+    </div>
+    
+    <!-- Dynamic Results Container -->
+    <div id="singleResult" class="result-content"></div>
+</div>
+
+                <!-- Stats Panel with Duplicate Information -->
+                <div class="stats-panel hidden" id="statsPanel">
+                    <div style="width: 100%">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Unique Records:</span>
+                                <span class="stat-value" id="uniqueCount"
+                                    >0</span
+                                >
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Total Records:</span>
+                                <span class="stat-value" id="totalCount"
+                                    >0</span
+                                >
+                            </div>
+                        </div>
+                        <div class="duplicate-stats" id="duplicateStats"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // DOM Elements
+            const fileInput = document.getElementById("fileInput");
+            const fileLabel = document.getElementById("fileLabel");
+            const fileLabelText = document.getElementById("fileLabelText");
+            const uploadForm = document.getElementById("uploadForm");
+            const uploadStatus = document.getElementById("uploadStatus");
+            const searchInput = document.getElementById("searchInput");
+            const searchBtn = document.getElementById("searchBtn");
+            const resultPanel = document.getElementById("resultPanel");
+            const statsPanel = document.getElementById("statsPanel");
+            const uniqueCount = document.getElementById("uniqueCount");
+            const totalCount = document.getElementById("totalCount");
+            const duplicateStats = document.getElementById("duplicateStats");
+
+            // Result elements
+            const singleResult = document.getElementById("singleResult");
+            const multipleResults = document.getElementById("multipleResults");
+            const multiResultBadge =
+                document.getElementById("multiResultBadge");
+            const resultCount = document.getElementById("resultCount");
+            const resultsTableBody =
+                document.getElementById("resultsTableBody");
+
+            // Single result fields
+            const resultFullName = document.getElementById("resultFullName");
+            const resultPhone = document.getElementById("resultPhone");
+            const resultFanNumber = document.getElementById("resultFanNumber");
+            const resultId = document.getElementById("resultId");
+            const statusBadge = document.getElementById("statusBadge");
+
+            // Toggle elements
+            const searchByPhoneBtn =
+                document.getElementById("searchByPhoneBtn");
+            const searchByFanBtn = document.getElementById("searchByFanBtn");
+            const fanHint = document.getElementById("fanHint");
+
+            // Add this with your other DOM elements
+            const resultContent = document.querySelector("#singleResult");
+
+            // State
+            let currentDataset = null;
+            let currentSearchType = "phone";
+
+            // File input handler
+            fileInput.addEventListener("change", () => {
+                if (fileInput.files.length) {
+                    fileLabelText.textContent = fileInput.files[0].name;
+                    fileLabel.classList.add("selected");
+                } else {
+                    fileLabelText.textContent = "Choose file or drag here";
+                    fileLabel.classList.remove("selected");
+                }
+            });
+
+            // Toggle search type
+            searchByPhoneBtn.addEventListener("click", () => {
+                searchByPhoneBtn.classList.add("active");
+                searchByFanBtn.classList.remove("active");
+                currentSearchType = "phone";
+                searchInput.placeholder =
+                    "Enter phone number (e.g., 0912345678)";
+                fanHint.classList.add("hidden");
+                searchInput.value = "";
+                resultPanel.classList.add("hidden");
+            });
+
+            searchByFanBtn.addEventListener("click", () => {
+                searchByFanBtn.classList.add("active");
+                searchByPhoneBtn.classList.remove("active");
+                currentSearchType = "fan";
+                searchInput.placeholder = "Enter Fan number (16 digits)";
+                fanHint.classList.remove("hidden");
+                searchInput.value = "";
+                resultPanel.classList.add("hidden");
+            });
+
+            const showStatus = (element, message, type) => {
+                element.textContent = message;
+                element.className = `status-message ${type}`;
+                element.classList.remove("hidden");
+                setTimeout(() => element.classList.add("hidden"), 5000);
+            };
+
+            // Format Fan number for display
+            function formatFanNumber(fanNumber) {
+                if (!fanNumber) return null;
+                const cleaned = fanNumber
+                    .toString()
+                    .replace(/\s+/g, "")
+                    .replace(/\D/g, "");
+                if (cleaned.length === 16) {
+                    return cleaned.match(/.{1,4}/g).join(" ");
+                }
+                return fanNumber.toString().trim();
+            }
+
+            // Upload handler
+            uploadForm.addEventListener("submit", async e => {
+                e.preventDefault();
+
+                if (!fileInput.files.length) {
+                    showStatus(uploadStatus, "Please select a file", "error");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("spreadsheet", fileInput.files[0]);
+
+                const uploadBtn = document.getElementById("uploadBtn");
+                uploadBtn.innerHTML =
+                    '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                uploadBtn.disabled = true;
+
+                try {
+                    const response = await fetch("/api/lookup/upload", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok)
+                        throw new Error(data.error || "Upload failed");
+
+                    // Update stats with duplicate information
+                    uniqueCount.textContent = data.recordCount || 0;
+                    totalCount.textContent =
+                        data.totalRecords || data.recordCount || 0;
+
+                    // Show duplicate stats
+                    let statsHtml = "";
+                    if (data.phoneDuplicates > 0) {
+                        statsHtml += `<div class="duplicate-stat"><i class="fas fa-phone-alt"></i> ${data.phoneDuplicates} duplicate phone numbers</div>`;
+                    }
+                    if (data.fanDuplicates > 0) {
+                        statsHtml += `<div class="duplicate-stat"><i class="fas fa-id-card"></i> ${data.fanDuplicates} duplicate Fan numbers</div>`;
+                    }
+                    if (data.totalRecords > data.recordCount) {
+                        statsHtml += `<div class="total-stat"><i class="fas fa-database"></i> ${data.recordCount} unique / ${data.totalRecords} total</div>`;
+                    }
+                    duplicateStats.innerHTML = statsHtml;
+
+                    showStatus(
+                        uploadStatus,
+                        `✅ Success! Loaded ${
+                            data.totalRecords || data.recordCount
+                        } records`,
+                        "success"
+                    );
+
+                    currentDataset = data.datasetId;
+                    statsPanel.classList.remove("hidden");
+                    searchBtn.disabled = false;
+                    resultPanel.classList.add("hidden");
+                } catch (error) {
+                    showStatus(
+                        uploadStatus,
+                        `❌ Error: ${error.message}`,
+                        "error"
+                    );
+                } finally {
+                    uploadBtn.innerHTML =
+                        '<i class="fas fa-upload"></i> Upload & Process';
+                    uploadBtn.disabled = false;
+                }
+            });
+
+            // Search handler
+            // Search handler
+            searchBtn.addEventListener("click", async () => {
+                const searchTerm = searchInput.value.trim();
+
+                if (!searchTerm) {
+                    alert("Please enter a search term");
+                    return;
+                }
+
+                if (!currentDataset) {
+                    alert("Please upload a spreadsheet first");
+                    return;
+                }
+
+                if (currentSearchType === "phone") {
+                    const cleanPhone = searchTerm.replace(/\D/g, "");
+                    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+                        alert(
+                            "Please enter a valid phone number (10-11 digits)"
+                        );
+                        return;
+                    }
+                }
+
+                searchBtn.innerHTML =
+                    '<i class="fas fa-spinner fa-spin"></i> Searching...';
+                searchBtn.disabled = true;
+
+                try {
+                    const response = await fetch("/api/lookup/search", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            datasetId: currentDataset,
+                            searchTerm: searchTerm,
+                            searchType: currentSearchType
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.found) {
+                        // Clear previous results
+                        resultContent.innerHTML = "";
+
+                        // Update badge based on number of results
+                        if (data.multiple) {
+                            statusBadge.textContent = `${data.count} Results`;
+                            statusBadge.style.background = "#f57c00";
+                        } else {
+                            statusBadge.textContent = "Found";
+                            statusBadge.style.background = "var(--accent)";
+                        }
+
+                        // Display all records
+                        data.records.forEach((record, index) => {
+                            const fanDisplay = record.fanNumber
+                                ? formatFanNumber(record.fanNumber)
+                                : "Not filled";
+                            const fanClass = record.fanNumber
+                                ? ""
+                                : "not-filled";
+
+                            // Add separator between multiple records
+                            if (index > 0) {
+                                const separator = document.createElement("div");
+                                separator.style.cssText = `
+                        margin: 20px -25px;
+                        height: 1px;
+                        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+                    `;
+                                resultContent.appendChild(separator);
+                            }
+
+                            // Create result item for Full Name
+                            const nameItem = document.createElement("div");
+                            nameItem.className = "result-item";
+                            nameItem.innerHTML = `
+                    <span class="result-label">Full Name ${
+                        data.multiple ? `#${index + 1}` : ""
+                    }:</span>
+                    <span class="result-value">${record.fullName || "-"}</span>
+                `;
+                            resultContent.appendChild(nameItem);
+
+                            // Create result item for Phone Number
+                            const phoneItem = document.createElement("div");
+                            phoneItem.className = "result-item";
+                            phoneItem.innerHTML = `
+                    <span class="result-label">Phone Number:</span>
+                    <span class="result-value">${
+                        record.phoneNumber || "-"
+                    }</span>
+                `;
+                            resultContent.appendChild(phoneItem);
+
+                            // Create result item for Fan Number (highlighted)
+                            const fanItem = document.createElement("div");
+                            fanItem.className = "result-item highlight";
+                            fanItem.innerHTML = `
+                    <span class="result-label">Fan Number:</span>
+                    <span class="result-value ${fanClass}">${fanDisplay}</span>
+                `;
+                            resultContent.appendChild(fanItem);
+
+                            // Create result item for ID Number
+                            const idItem = document.createElement("div");
+                            idItem.className = "result-item";
+                            idItem.innerHTML = `
+                    <span class="result-label">ID Number:</span>
+                    <span class="result-value">${record.idNumber || "-"}</span>
+                `;
+                            resultContent.appendChild(idItem);
+                        });
+
+                        // Add record count note if multiple
+                        if (data.multiple) {
+                            const note = document.createElement("div");
+                            note.style.cssText = `
+                    margin-top: 20px;
+                    padding: 10px;
+                    background: rgba(245, 124, 0, 0.1);
+                    border-radius: 12px;
+                    color: #f57c00;
+                    font-size: 0.9rem;
+                    text-align: center;
+                    border: 1px solid rgba(245, 124, 0, 0.3);
+                `;
+                            note.innerHTML = `<i class="fas fa-info-circle"></i> Found ${
+                                data.count
+                            } records with this ${
+                                currentSearchType === "phone"
+                                    ? "phone number"
+                                    : "Fan number"
+                            }`;
+                            resultContent.appendChild(note);
+                        }
+                    } else {
+                        // No results
+                        resultContent.innerHTML = `
+                <div class="result-item">
+                    <span class="result-label">Full Name:</span>
+                    <span class="result-value">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Phone Number:</span>
+                    <span class="result-value">-</span>
+                </div>
+                <div class="result-item highlight">
+                    <span class="result-label">Fan Number:</span>
+                    <span class="result-value">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">ID Number:</span>
+                    <span class="result-value">-</span>
+                </div>
+            `;
+                        statusBadge.textContent = "Not Found";
+                        statusBadge.style.background = "#f44336";
+                    }
+
+                    resultPanel.classList.remove("hidden");
+                } catch (error) {
+                    alert("Search failed. Please try again.");
+                    console.error(error);
+                } finally {
+                    searchBtn.innerHTML =
+                        '<i class="fas fa-search"></i> Search';
+                    searchBtn.disabled = false;
+                }
+            });
+
+            // Enter key support
+            searchInput.addEventListener("keypress", e => {
+                if (e.key === "Enter" && !searchBtn.disabled) {
+                    searchBtn.click();
+                }
+            });
+
+            // Set active nav
+            document.addEventListener("DOMContentLoaded", function () {
+                const path = window.location.pathname;
+                document
+                    .getElementById("nav-home")
+                    .classList.toggle("active", path === "/");
+                document
+                    .getElementById("nav-generator")
+                    .classList.toggle("active", path === "/generator");
+                document
+                    .getElementById("nav-validator")
+                    .classList.toggle("active", path === "/validator");
+            });
+        </script>
+    </body>
+</html>

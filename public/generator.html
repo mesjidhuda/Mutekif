@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ID Generator | Etikaf Admin Suite</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant:ital,wght@0,300..700;1,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Didact+Gothic&family=Outfit:wght@100..900&family=Stack+Sans+Headline:wght@200..700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <link rel="stylesheet" href="css/premium.css" />
+    </head>
+    <body>
+        <!-- Premium Loading Overlay -->
+        <div id="premiumLoading" class="premium-loading">
+            <div class="loading-content">
+                <h3 class="loading-text" id="loadingText">
+                    Generating Identity Cards
+                </h3>
+                <p class="loading-subtext">
+                    <i class="fas fa-file-excel"></i>
+                    <span id="loadingFileName">Processing spreadsheet...</span>
+                </p>
+
+                <!-- Progress Bar -->
+                <div class="loading-progress">
+                    <div class="loading-progress-bar"></div>
+                </div>
+
+                <!-- Processing Steps -->
+                <div class="loading-steps">
+                    <div class="loading-step active" id="step1">
+                        <i class="fas fa-file-excel"></i>
+                        <span>Parsing Data</span>
+                        <div class="step-dot"></div>
+                    </div>
+                    <div class="loading-step" id="step2">
+                        <i class="fas fa-images"></i>
+                        <span>Processing Photos</span>
+                        <div class="step-dot"></div>
+                    </div>
+                    <div class="loading-step" id="step3">
+                        <i class="fas fa-qrcode"></i>
+                        <span>Generating QR</span>
+                        <div class="step-dot"></div>
+                    </div>
+                </div>
+
+                <!-- File Processing Animation -->
+                <div class="file-processing">
+                    <i class="fas fa-spinner fa-pulse"></i>
+                    <span id="processingStatus"
+                        >Reading spreadsheet data...</span
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Rest of your body content -->
+
+        <!-- Bottom Navigation - Telegram Style -->
+        <nav class="bottom-nav no-print">
+            <a href="/" class="bottom-nav-item" id="nav-home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a
+                href="/generator"
+                class="bottom-nav-item active"
+                id="nav-generator"
+            >
+                <i class="fas fa-id-card"></i>
+                <span>Generator</span>
+            </a>
+            <a href="/validator" class="bottom-nav-item" id="nav-validator">
+                <i class="fas fa-search"></i>
+                <span>Validator</span>
+            </a>
+            <button
+                type="button"
+                onclick="window.print()"
+                id="printBtn"
+                class="bottom-nav-export"
+                disabled
+            >
+                <i class="fas fa-print"></i>
+                <span>Export</span>
+            </button>
+        </nav>
+
+        <!-- Original navbar removed, keeping only brand logo -->
+        <nav class="glass-nav no-print" style="position: relative">
+            <div class="nav-container">
+                <div class="brand">
+                    <div class="logo-icon"><i class="fas fa-mosque"></i></div>
+                    <div class="brand-text">
+                        <span class="main-title">ETIKAF ADMIN</span>
+                        <span class="sub-title">Identity Suite</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="main-content no-print">
+            <section class="hero-section">
+                <h1>Identity Batch Processing</h1>
+                <p>
+                    Deploy secure, QR-integrated identity cards for the 2026
+                    Etikaf Season.
+                </p>
+            </section>
+
+            <!-- Photo Toggle - Premium Design -->
+            <!-- Photo Toggle - Premium Design -->
+            <div class="glass-panel" style="padding: 20px; margin-bottom: 30px">
+                <div class="toggle-container">
+                    <span class="toggle-label" id="photoOffLabel"
+                        >Photos Off</span
+                    >
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="photoToggle" />
+                        <!-- Removed 'checked' -->
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label active" id="photoOnLabel"
+                        >Photos On</span
+                    >
+                </div>
+                <div
+                    style="
+                        text-align: center;
+                        color: var(--accent);
+                        font-size: 0.9rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
+                    "
+                >
+                    <i class="fas fa-info-circle"></i>
+                    <span id="toggleStatus"
+                        >Photos disabled - ZIP not required</span
+                    >
+                    <!-- Changed message -->
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <form id="uploadForm">
+                    <div class="upload-grid">
+                        <div class="upload-card">
+                            <input
+                                type="file"
+                                name="excel"
+                                id="excelFile"
+                                accept=".xlsx, .xls"
+                                required
+                            />
+                            <label for="excelFile" id="excelLabel">
+                                <div class="icon-circle">
+                                    <i class="fas fa-table"></i>
+                                </div>
+                                <h3>Registry Data</h3>
+                                <p>Excel Document (.xlsx, .xls)</p>
+                                <span class="file-status">No file chosen</span>
+                            </label>
+                        </div>
+
+                        <div class="upload-card" id="zipUploadCard">
+                            <input
+                                type="file"
+                                name="zip"
+                                id="zipFile"
+                                accept=".zip"
+                            />
+                            <label for="zipFile" id="zipLabel">
+                                <div class="icon-circle">
+                                    <i class="fas fa-file-zipper"></i>
+                                </div>
+                                <h3>Biometrics</h3>
+                                <p>Photo ZIP Archive</p>
+                                <span class="file-status">No file chosen</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="genBtn" class="generate-btn">
+                        <span id="btnText">Generate Identity Cards</span>
+                        <div id="loader" class="hidden">
+                            <div class="scan-line"></div>
+                            <span style="margin-left: 10px"
+                                >Processing Assets...</span
+                            >
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="displayArea" class="display-area">
+            <div class="display-header no-print hidden" id="resultsInfo">
+                <div
+                    style="
+                        height: 2px;
+                        background: linear-gradient(
+                            90deg,
+                            transparent,
+                            var(--accent),
+                            transparent
+                        );
+                    "
+                ></div>
+                <h3 style="margin: 20px 0 20px 40px; color: var(--accent)">
+                    Generated Previews
+                </h3>
+            </div>
+            <div id="output" class="id-results-grid"></div>
+        </div>
+
+        <script>
+            // File input handlers
+            const handleFiles = (inputId, labelId) => {
+                document
+                    .getElementById(inputId)
+                    .addEventListener("change", e => {
+                        const label = document.getElementById(labelId);
+                        const status = label.querySelector(".file-status");
+                        if (e.target.files.length > 0) {
+                            status.textContent = e.target.files[0].name;
+                            label.classList.add("selected");
+                        } else {
+                            status.textContent = "No file chosen";
+                            label.classList.remove("selected");
+                        }
+                    });
+            };
+
+            handleFiles("excelFile", "excelLabel");
+            handleFiles("zipFile", "zipLabel");
+
+            // Photo toggle
+            // Photo toggle - Default OFF
+            const photoToggle = document.getElementById("photoToggle");
+            const zipUploadCard = document.getElementById("zipUploadCard");
+            const zipFile = document.getElementById("zipFile");
+            const zipLabel = document.getElementById("zipLabel");
+            const toggleStatus = document.getElementById("toggleStatus");
+            const photoOnLabel = document.getElementById("photoOnLabel");
+            const photoOffLabel = document.getElementById("photoOffLabel");
+
+            // Set initial state (Photos OFF by default)
+            zipUploadCard.classList.add("disabled");
+            zipFile.required = false;
+            toggleStatus.textContent = "Photos disabled - ZIP not required";
+            photoOffLabel.classList.add("active");
+            photoOnLabel.classList.remove("active");
+
+            photoToggle.addEventListener("change", function () {
+                if (this.checked) {
+                    // Photos enabled
+                    zipUploadCard.classList.remove("disabled");
+                    zipFile.required = true;
+                    toggleStatus.textContent =
+                        "Photos enabled - ZIP upload required";
+                    photoOnLabel.classList.add("active");
+                    photoOffLabel.classList.remove("active");
+                    if (zipFile.files.length === 0) {
+                        const status = zipLabel.querySelector(".file-status");
+                        status.textContent = "No file chosen";
+                        zipLabel.classList.remove("selected");
+                    }
+                } else {
+                    // Photos disabled (DEFAULT)
+                    zipUploadCard.classList.add("disabled");
+                    zipFile.required = false;
+                    zipFile.value = "";
+                    toggleStatus.textContent =
+                        "Photos disabled - ZIP not required";
+                    photoOffLabel.classList.add("active");
+                    photoOnLabel.classList.remove("active");
+                    const status = zipLabel.querySelector(".file-status");
+                    status.textContent = "No file chosen (disabled)";
+                    zipLabel.classList.remove("selected");
+                }
+            });
+
+            // Form submission
+            // Form submission with premium loading
+            document
+                .getElementById("uploadForm")
+                .addEventListener("submit", async e => {
+                    e.preventDefault();
+
+                    if (photoToggle.checked && !zipFile.files.length) {
+                        alert("Please select a ZIP file containing photos");
+                        return;
+                    }
+
+                    const btnText = document.getElementById("btnText");
+                    const loader = document.getElementById("loader");
+                    const genBtn = document.getElementById("genBtn");
+                    const resultsInfo = document.getElementById("resultsInfo");
+                    const printBtn = document.getElementById("printBtn");
+                    const premiumLoading =
+                        document.getElementById("premiumLoading");
+                    const loadingText = document.getElementById("loadingText");
+                    const loadingFileName =
+                        document.getElementById("loadingFileName");
+                    const processingStatus =
+                        document.getElementById("processingStatus");
+                    const step1 = document.getElementById("step1");
+                    const step2 = document.getElementById("step2");
+                    const step3 = document.getElementById("step3");
+
+                    // Get file names for display
+                    const excelFile =
+                        document.getElementById("excelFile").files[0];
+                    const zipFileSelected =
+                        document.getElementById("zipFile").files[0];
+
+                    // Reset steps
+                    step1.classList.add("active");
+                    step2.classList.remove("active");
+                    step3.classList.remove("active");
+
+                    // Update loading text
+                    loadingFileName.textContent = excelFile
+                        ? excelFile.name
+                        : "Spreadsheet";
+                    processingStatus.textContent =
+                        "Reading spreadsheet data...";
+
+                    // Show premium loading
+                    premiumLoading.classList.add("active");
+
+                    // Simulate step progression (for visual effect)
+                    setTimeout(() => {
+                        step1.classList.remove("active");
+                        step2.classList.add("active");
+                        processingStatus.textContent =
+                            "Processing photos and matching records...";
+                        loadingText.textContent = "Processing Images";
+                    }, 1500);
+
+                    setTimeout(() => {
+                        step2.classList.remove("active");
+                        step3.classList.add("active");
+                        processingStatus.textContent =
+                            "Generating QR codes and building cards...";
+                        loadingText.textContent = "Creating QR Codes";
+                    }, 3000);
+
+                    btnText.classList.add("hidden");
+                    loader.classList.remove("hidden");
+                    genBtn.disabled = true;
+
+                    try {
+                        const formData = new FormData(e.target);
+                        formData.append("includePhotos", photoToggle.checked);
+
+                        const res = await fetch("/api/id-generator/process", {
+                            method: "POST",
+                            body: formData
+                        });
+                        const result = await res.json();
+
+                        // Hide premium loading
+                        premiumLoading.classList.remove("active");
+
+                        if (result.success) {
+                            renderCards(result.data);
+                            printBtn.disabled = false;
+                            resultsInfo.classList.remove("hidden");
+                            resultsInfo.scrollIntoView({ behavior: "smooth" });
+                        } else {
+                            alert("Error: " + result.error);
+                        }
+                    } catch (err) {
+                        // Hide premium loading on error
+                        premiumLoading.classList.remove("active");
+                        alert("Connection lost. Please check server.");
+                        console.error(err);
+                    } finally {
+                        btnText.classList.remove("hidden");
+                        loader.classList.add("hidden");
+                        genBtn.disabled = false;
+                    }
+                });
+
+            function renderCards(records) {
+                const container = document.getElementById("output");
+                container.innerHTML = "";
+                records.forEach(rec => {
+                    const photoHtml = rec.photoBase64
+                        ? `<img src="${rec.photoBase64}" alt="photo">`
+                        : `<div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #000; color: var(--accent);"><span class="ids">${
+                              rec.id_number || "ID"
+                          }</span></div>`;
+
+                    const cardHTML = `
+            <div class="id-print-unit">
+                <div class="id-card-front">
+                    <div class="c-header">
+                        <div class="c-logo"><i class="fas fa-mosque"></i> ETIKAF PLATFORM</div>
+                        <div class="c-badge">MUTEKIF</div>
+                    </div>
+                    <div class="c-body">
+                        <div class="c-left">
+                            <div class="c-photo">
+                                ${photoHtml}
+                            </div>
+                            <div class="c-info">
+                                <div class="c-name">${rec.full_name || ""}</div>
+                                <div class="c-sub">ID: ${
+                                    rec.id_number || ""
+                                } <span class="c-divider">|</span> ${
+                                    rec.gender || "N/A"
+                                }</div>
+                                <div class="c-ref">ETK-2026-${
+                                    rec.id_number || ""
+                                }</div>
+                            </div>
+                        </div>
+                        <div class="c-right">
+                            <div class="c-qr"><img src="${rec.qrBase64}"></div>
+                        </div>
+                    </div>
+                    <div class="c-footer">
+                        <span style="font-weight: bold;">MASJID AL-HUDA</span>
+                        <span>EXP: ${rec.expiry_date || "N/A"}</span>
+                    </div>
+                </div>
+            </div>`;
+                    container.insertAdjacentHTML("beforeend", cardHTML);
+                });
+            }
+
+            // Set active nav
+            document.addEventListener("DOMContentLoaded", function () {
+                document.getElementById("nav-home").classList.remove("active");
+                document
+                    .getElementById("nav-generator")
+                    .classList.add("active");
+                document
+                    .getElementById("nav-validator")
+                    .classList.remove("active");
+            });
+        </script>
+    </body>
+</html>
